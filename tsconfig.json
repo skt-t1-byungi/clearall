@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "lib": ["dom", "esnext"],
+        "module": "commonjs",
+        "declaration": true,
+        "strict": true
+    },
+    "files": [
+        "index.ts"
+    ]
+}
