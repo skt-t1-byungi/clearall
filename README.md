@@ -28,14 +28,14 @@ clearAll()
 ```js
 class View{
     _init(){
-        this._clearEvents = add(window, 'orientationchange', this._onLoad)
+        this._clearEvents = add(window, 'orientationchange', this._onRotate)
             .add(this._el, 'mouseup', this._onMouseUp)
             .add(this._el, 'mousedown', this._onMouseDown)
             .add(this._el, 'mousemove', this._onMouseMove)
             .add(this._emitter, 'onMessage', this._onMessage)
     }
 
-    destroy(){
+    dispose(){
         this._clearEvents()
     }
 
@@ -74,7 +74,7 @@ Add an event listener to the same clearAll context.
 ## Tips
 ### Type Error for window custom event in typescript.
 ```ts
-//=> ❌ error
+// ❌ error
 add(window, 'user_custom_event', () => { /* ... */})
 ```
 For convenience, there are strong type constraints for some global objects. But sometimes this gets in the way.
