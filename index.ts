@@ -26,12 +26,13 @@ type Listener<O extends Listenable, K extends string> =
     : O extends {addEventListener: Listen<K, infer Args>} ? Func<Args> : AnyFunc
 
 export function add <O extends Listenable, K extends EventName<O>> (o: O, name: K, listener: Listener<O, K>, ...params: any[]) {
-    const unsubscribes: Array<() => void> = []
+    let unsubscribes: Array<() => void> = []
 
     subscribe(o, name, listener, params)
 
     function clearAll () {
-        unsubscribes.slice().forEach(fn => fn())
+        unsubscribes.forEach(fn => fn())
+        unsubscribes = []
     }
     clearAll.add = <O extends Listenable, K extends EventName<O>>(o: O, name: K, listener: Listener<O, K>, ...params: any[]) => {
         subscribe(o, name, listener, params)
@@ -43,10 +44,7 @@ export function add <O extends Listenable, K extends EventName<O>> (o: O, name: 
     function subscribe (o: Listenable, name: any, listener: AnyFunc, ...params: any[]) {
         const { on, off } = normalizeListenable(o)
         on(name, listener, ...params)
-        unsubscribes.push(function unsubscribe () {
-            off(name, listener)
-            unsubscribes.splice(unsubscribes.indexOf(unsubscribe), 1)
-        })
+        unsubscribes.push(() => off(name, listener))
     }
 }
 
