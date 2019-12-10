@@ -28,6 +28,12 @@ test('basic', t => {
     t.is(calls, 4)
 })
 
+test('check listable', t => {
+    const ee = new EventEmitter()
+    t.notThrows(() => add(ee, 'test', () => {}))
+    t.throws(() => add({} as any, 'test', () => {}), 'Listener add method not found.')
+})
+
 test.skip('type', t => {
     const ee = new EventEmitter()
     const ws = new WebSocket('')

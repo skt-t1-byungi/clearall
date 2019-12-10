@@ -3,9 +3,9 @@ type AnyFunc = Func<any[]>
 type Listen<K extends string, Args extends any[]> = (name: K, listener: (...args: Args) => any, ...rest: any[]) => any;
 type AnyListen = Listen<any, any[]>
 type Listenable =
-    {on: AnyListen; off: AnyListen}
+    {addEventListener: AnyListen; removeEventListener: AnyListen}
     | {addListener: AnyListen; removeListener: AnyListen}
-    | {addEventListener: AnyListen; removeEventListener: AnyListen}
+    | {on: AnyListen; off: AnyListen}
 type EventName<O extends Listenable> =
     O extends Window ? keyof WindowEventMap
     : O extends Document ? keyof DocumentEventMap
@@ -51,10 +51,9 @@ export function add <O extends Listenable, K extends EventName<O>> (o: O, name: 
 export default add
 
 function normalizeListenable (o: any): {on: AnyListen; off: AnyListen} {
-    return {
-        on: (o.on || o.addListener || o.addEventListener || noop).bind(o),
-        off: (o.off || o.removeListener || o.removeEventListener || noop).bind(o)
-    }
+    const on = o.addEventListener || o.addListener || o.on
+    if (typeof on !== 'function') throw new TypeError('Listener add method not found.')
+    const off = o.removeEventListener || o.removeListener || o.off
+    if (typeof off !== 'function') throw new TypeError('Listener remove method not found.')
+    return { on: on.bind(o), off: off.bind(o) }
 }
-
-function noop () {}
