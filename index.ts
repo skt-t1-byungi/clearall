@@ -52,8 +52,10 @@ export default add
 
 function normalizeListenable (o: any): {on: AnyListen; off: AnyListen} {
     const on = o.addEventListener || o.addListener || o.on
-    if (typeof on !== 'function') throw new TypeError('Listener add method not found.')
+    if (typeof on !== 'function') throw new TypeError('Add listener method not found.')
+
     const off = o.removeEventListener || o.removeListener || o.off
-    if (typeof off !== 'function') throw new TypeError('Listener remove method not found.')
+    if (typeof off !== 'function') throw new TypeError('Remove Listener method not found.')
+
     return { on: on.bind(o), off: off.bind(o) }
 }

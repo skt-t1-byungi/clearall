@@ -31,7 +31,7 @@ test('basic', t => {
 test('check listable', t => {
     const ee = new EventEmitter()
     t.notThrows(() => add(ee, 'test', () => {}))
-    t.throws(() => add({} as any, 'test', () => {}), 'Listener add method not found.')
+    t.throws(() => add({} as any, 'test', () => {}), 'Add listener method not found.')
 })
 
 test.skip('type', t => {
