@@ -27,10 +27,10 @@
     "devDependencies": {
         "@byungi/event-emitter": "^1.1.0",
         "ava": "^2.4.0",
-        "eslint": "^6.6.0",
-        "eslint-config-byungi": "^0.7.6",
-        "ts-node": "^8.5.2",
-        "typescript": "^3.7.2"
+        "eslint": "^6.8.0",
+        "eslint-config-byungi": "^0.7.7",
+        "ts-node": "^8.6.2",
+        "typescript": "^3.7.5"
     },
     "eslintConfig": {
         "extends": "byungi/typescript"
