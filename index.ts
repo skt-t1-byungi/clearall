@@ -25,10 +25,15 @@ type Listener<O extends Listenable, K extends string> =
     : O extends {addListener: Listen<K, infer Args>} ? Func<Args>
     : O extends {addEventListener: Listen<K, infer Args>} ? Func<Args> : AnyFunc
 
-export function add <O extends Listenable, K extends EventName<O>> (o: O, name: K, listener: Listener<O, K>, ...params: any[]) {
+type Adder =<O extends Listenable, K extends EventName<O>>(o: O, name: K, listener: Listener<O, K>, ...params: any[]) => ClearAll
+type ClearAll = AnyFunc & { add: Adder }
+
+export function add (): ClearAll
+export function add <O extends Listenable, K extends EventName<O>> (o: O, name: K, listener: Listener<O, K>, ...params: any[]): ClearAll
+export function add <O extends Listenable, K extends EventName<O>> (o?: O, name?: K, listener?: Listener<O, K>, ...params: any[]): ClearAll {
     let unsubscribes: Array<() => void> = []
 
-    subscribe(o, name, listener, params)
+    if (o && listener) subscribe(o, name, listener, params)
 
     function clearAll () {
         unsubscribes.forEach(fn => fn())

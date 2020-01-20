@@ -34,6 +34,16 @@ test('check listenable', t => {
     t.throws(() => add({} as any, 'test', () => {}), 'Add listener method not found.')
 })
 
+test('create without args', t => {
+    const clearAll = add()
+    const ee = new EventEmitter<{test(): void}>()
+    t.plan(1)
+    clearAll.add(ee, 'test', () => t.pass())
+    ee.emit('test')
+    clearAll()
+    ee.emit('test')
+})
+
 test.skip('type', t => {
     const ee = new EventEmitter()
     const ws = new WebSocket('')
