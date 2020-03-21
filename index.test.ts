@@ -1,50 +1,52 @@
-import test from 'ava'
 import EventEmitter from '@byungi/event-emitter'
+
 import add from '.'
 
-test('basic', t => {
-    const ee = new EventEmitter<{test(): void}>()
+test('basic', () => {
+    const ee = new EventEmitter<{a(): void}>()
+    const f = jest.fn()
+    const clearAll = add(ee, 'a', f)
 
-    let calls = 0
-    const inc = () => calls++
-
-    const clearAll = add(ee, 'test', inc)
-    ee.emit('test')
-    t.is(calls, 1)
+    ee.emit('a')
+    expect(f).toBeCalledTimes(1)
 
     clearAll()
-    ee.emit('test')
-    t.is(calls, 1)
+    ee.emit('a')
+    expect(f).toBeCalledTimes(1)
+})
 
-    clearAll
-        .add(ee, 'test', inc)
-        .add(ee, 'test', inc)
-        .add(ee, 'test', inc)
-    ee.emit('test')
-    t.is(calls, 4)
+test('chain', () => {
+    const ee = new EventEmitter<{a(): void}>()
+    const f = jest.fn()
+    const clearAll = add(ee, 'a', f)
+        .add(ee, 'a', f)
+        .add(ee, 'a', f)
+
+    ee.emit('a')
+    expect(f).toBeCalledTimes(3)
 
     clearAll()
-    ee.emit('test')
-    t.is(calls, 4)
+    ee.emit('a')
+    expect(f).toBeCalledTimes(3)
 })
 
-test('check listenable', t => {
-    const ee = new EventEmitter()
-    t.notThrows(() => add(ee, 'test', () => {}))
-    t.throws(() => add({} as any, 'test', () => {}), 'Add listener method not found.')
+test('check listenable', () => {
+    expect(() => add(new EventEmitter(), 'a', () => {})).not.toThrow()
+    expect(() => add({} as any, 'a', () => {})).toThrow('`Add Listener` method was not found.')
 })
 
-test('create without args', t => {
+test('lazy add(init without args)', () => {
     const clearAll = add()
-    const ee = new EventEmitter<{test(): void}>()
-    t.plan(1)
-    clearAll.add(ee, 'test', () => t.pass())
-    ee.emit('test')
+    const ee = new EventEmitter<{a(): void}>()
+    const f = jest.fn()
+    clearAll.add(ee, 'a', f)
+    ee.emit('a')
     clearAll()
-    ee.emit('test')
+    ee.emit('a')
+    expect(f).toBeCalledTimes(1)
 })
 
-test.skip('type', t => {
+test.skip('type', () => {
     const ee = new EventEmitter()
     const ws = new WebSocket('')
     const xhr = new XMLHttpRequest()
@@ -56,6 +58,4 @@ test.skip('type', t => {
         .add(ee, 'test', () => {})
         .add(ws, 'message', () => {})
         .add(xhr, 'readystatechange', () => {})
-
-    t.pass()
 })
