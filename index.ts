@@ -50,7 +50,7 @@ export function add <O extends Listenable, K extends EventName<O>> (o?: O, name?
 
     return clearAll
 
-    function subscribe (o: any, name: any, listener: AnyFn, ...params: any[]): void {
+    function subscribe (o: any, name: any, listener: AnyFn, params: any[]): void {
         const on = o.addEventListener || o.addListener || o.on || o.subscribe
         if (typeof on !== 'function') throw new TypeError('`Add Listener` method was not found.')
 

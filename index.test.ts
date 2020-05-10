@@ -53,6 +53,13 @@ test('prevent maxCallStack', () => {
     expect(n).toBe(1)
 })
 
+test('params', () => {
+    const on = jest.fn()
+    add({ on }, 't', () => {}, 1, 2)
+    expect(on.mock.calls[0][2]).toBe(1)
+    expect(on.mock.calls[0][3]).toBe(2)
+})
+
 // eslint-disable-next-line jest/no-disabled-tests
 test.skip('type', () => {
     const ee = new EventEmitter()
