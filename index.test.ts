@@ -46,6 +46,7 @@ test('lazy add(init without args)', () => {
     expect(f).toBeCalledTimes(1)
 })
 
+// eslint-disable-next-line jest/no-disabled-tests
 test.skip('type', () => {
     const ee = new EventEmitter()
     const ws = new WebSocket('')
