@@ -2,7 +2,7 @@ import EventEmitter from '@byungi/event-emitter'
 
 import add from '.'
 
-test('basic', () => {
+test('clear', () => {
     const ee = new EventEmitter<{a(): void}>()
     const f = jest.fn()
     const clearAll = add(ee, 'a', f)
@@ -15,7 +15,7 @@ test('basic', () => {
     expect(f).toBeCalledTimes(1)
 })
 
-test('chain', () => {
+test('chaining', () => {
     const ee = new EventEmitter<{a(): void}>()
     const f = jest.fn()
     const clearAll = add(ee, 'a', f)
@@ -35,7 +35,7 @@ test('check listenable', () => {
     expect(() => add({} as any, 'a', () => {})).toThrow('`Add Listener` method was not found.')
 })
 
-test('lazy add(init without args)', () => {
+test('lazy add (init without args)', () => {
     const clearAll = add()
     const ee = new EventEmitter<{a(): void}>()
     const f = jest.fn()
@@ -44,6 +44,13 @@ test('lazy add(init without args)', () => {
     clearAll()
     ee.emit('a')
     expect(f).toBeCalledTimes(1)
+})
+
+test('prevent maxCallStack', () => {
+    let n = 0
+    const clearAll = add({ subscribe: (s: string) => () => ++n < 2 && clearAll() }, 'a', () => {})
+    clearAll()
+    expect(n).toBe(1)
 })
 
 // eslint-disable-next-line jest/no-disabled-tests
