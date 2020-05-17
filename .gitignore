@@ -1,5 +1,4 @@
 node_modules/
+dist/
 *.lock
 *.log
-*.d.ts
-index.js
