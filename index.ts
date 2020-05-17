@@ -19,7 +19,7 @@ type EventName<O extends Listenable> =
                                 : O extends {on: AnyFn} ? Parameters<O['on']>[0]
                                     : O extends {subscribe: AnyFn} ? Parameters<O['subscribe']>[0] : string
 
-type LinterBy<O extends Listenable, K extends string> =
+type ListenerBy<O extends Listenable, K extends string> =
     O extends Window ? K extends keyof WindowEventMap ? Fn<[WindowEventMap[K]]> : never
         : O extends Document ? K extends keyof DocumentEventMap ? Fn<[DocumentEventMap[K]]> : never
             : O extends HTMLElement ? K extends keyof HTMLElementEventMap ? Fn<[HTMLElementEventMap[K]]> : never
@@ -30,12 +30,12 @@ type LinterBy<O extends Listenable, K extends string> =
                                 : O extends {on: Listener<K, infer Args>} ? Fn<Args>
                                     : O extends {subscribe: Listener<K, infer Args>} ? Fn<Args> : AnyFn
 
-type Adder =<O extends Listenable, K extends EventName<O>>(o: O, name: K, listener: LinterBy<O, K>, ...params: any[]) => ClearAll
+type Adder =<O extends Listenable, K extends EventName<O>>(o: O, name: K, listener: ListenerBy<O, K>, ...params: any[]) => ClearAll
 type ClearAll = AnyFn & { add: Adder }
 
 export function add (): ClearAll
-export function add <O extends Listenable, K extends EventName<O>> (o: O, name: K, listener: LinterBy<O, K>, ...params: any[]): ClearAll
-export function add <O extends Listenable, K extends EventName<O>> (o?: O, name?: K, listener?: LinterBy<O, K>, ...params: any[]): ClearAll {
+export function add <O extends Listenable, K extends EventName<O>> (o: O, name: K, listener: ListenerBy<O, K>, ...params: any[]): ClearAll
+export function add <O extends Listenable, K extends EventName<O>> (o?: O, name?: K, listener?: ListenerBy<O, K>, ...params: any[]): ClearAll {
     const unsubscribes: Array<() => void> = []
 
     if (o && listener) subscribe(o, name, listener, params)
@@ -43,7 +43,7 @@ export function add <O extends Listenable, K extends EventName<O>> (o?: O, name?
     function clearAll () {
         unsubscribes.splice(0).forEach(fn => fn())
     }
-    clearAll.add = <O extends Listenable, K extends EventName<O>>(o: O, name: K, listener: LinterBy<O, K>, ...params: any[]) => {
+    clearAll.add = <O extends Listenable, K extends EventName<O>>(o: O, name: K, listener: ListenerBy<O, K>, ...params: any[]) => {
         subscribe(o, name, listener, params)
         return clearAll
     }
@@ -54,9 +54,9 @@ export function add <O extends Listenable, K extends EventName<O>> (o?: O, name?
         const on = o.addEventListener || o.addListener || o.on || o.subscribe
         if (typeof on !== 'function') throw new TypeError('`Add Listener` method was not found.')
 
-        const res = on.call(o, name, listener, ...params)
-        if (typeof res === 'function') {
-            return void unsubscribes.push(res)
+        const f = on.call(o, name, listener, ...params)
+        if (typeof f === 'function') {
+            return void unsubscribes.push(f)
         }
 
         const off = o.removeEventListener || o.removeListener || o.off || o.unsubscribe
