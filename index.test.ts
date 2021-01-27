@@ -3,7 +3,7 @@ import EventEmitter from '@byungi/event-emitter'
 import add from '.'
 
 test('clear', () => {
-    const ee = new EventEmitter<{a(): void}>()
+    const ee = new EventEmitter<{ a(): void }>()
     const f = jest.fn()
     const clearAll = add(ee, 'a', f)
 
@@ -16,11 +16,9 @@ test('clear', () => {
 })
 
 test('chaining', () => {
-    const ee = new EventEmitter<{a(): void}>()
+    const ee = new EventEmitter<{ a(): void }>()
     const f = jest.fn()
-    const clearAll = add(ee, 'a', f)
-        .add(ee, 'a', f)
-        .add(ee, 'a', f)
+    const clearAll = add(ee, 'a', f).add(ee, 'a', f).add(ee, 'a', f)
 
     ee.emit('a')
     expect(f).toBeCalledTimes(3)
@@ -37,7 +35,7 @@ test('check listenable', () => {
 
 test('lazy add (init without args)', () => {
     const clearAll = add()
-    const ee = new EventEmitter<{a(): void}>()
+    const ee = new EventEmitter<{ a(): void }>()
     const f = jest.fn()
     clearAll.add(ee, 'a', f)
     ee.emit('a')
