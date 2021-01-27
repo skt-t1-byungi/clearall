@@ -58,7 +58,6 @@ test('params', () => {
     expect(on.mock.calls[0][3]).toBe(2)
 })
 
-// eslint-disable-next-line jest/no-disabled-tests
 test.skip('type', () => {
     const ee = new EventEmitter()
     const ws = new WebSocket('')
